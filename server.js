@@ -23,6 +23,8 @@ const MOLIT_API_KEYS = {
 };
 const ECOS_API_KEY = process.env.ECOS_API_KEY || '';
 const KAKAO_API_KEY = process.env.KAKAO_REST_API_KEY || process.env.KAKAO_API_KEY || '';
+const KB_PRICE_API_KEY = process.env.KB_PRICE_API_KEY || process.env.KB_REAL_ESTATE_API_KEY || '';
+const REAL_ESTATE_LISTING_API_KEY = process.env.REAL_ESTATE_LISTING_API_KEY || process.env.NAVER_REAL_ESTATE_API_KEY || '';
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 const MOLIT_ENDPOINTS = {
@@ -705,11 +707,13 @@ const mergeRealData = (analysis, molitData, ecosData, kakaoData, bldgData, kaptD
 app.get('/api/health', (_, res) => {
   res.json({
     ok: true,
-    version: '4.5.4',
+    version: '4.5.5',
     molit: Object.values(MOLIT_API_KEYS).some(Boolean),
     molitServices: Object.fromEntries(Object.entries(MOLIT_API_KEYS).map(([name, key]) => [name, Boolean(key)])),
     ecos: Boolean(ECOS_API_KEY),
     kakao: Boolean(KAKAO_API_KEY),
+    kbPrice: Boolean(KB_PRICE_API_KEY),
+    rentListings: Boolean(REAL_ESTATE_LISTING_API_KEY),
     geminiGrounding: Boolean(GEMINI_API_KEY),
     model: GEMINI_MODEL
   });
@@ -784,6 +788,20 @@ app.get('/api/risk-scan', async (req, res) => {
   const jeonseAlerts = [];
   const priceSpikes = [];
   const volumeSignals = [];
+  const kbPriceInversions = [];
+  const rentSupplyDrops = [];
+  const sourceStatus = {
+    kbPrice: {
+      enabled: Boolean(KB_PRICE_API_KEY),
+      label: 'KB부동산 시세 API/제휴 데이터',
+      message: KB_PRICE_API_KEY ? 'KB 시세 키는 감지됐지만 대량 시세 조회 어댑터는 아직 연결되지 않았습니다.' : 'KB 시세 역전 탐지는 KB부동산 시세 API 또는 제휴 데이터 연결 후 활성화됩니다.'
+    },
+    rentListings: {
+      enabled: Boolean(REAL_ESTATE_LISTING_API_KEY),
+      label: '전세 매물 재고 API/제휴 데이터',
+      message: REAL_ESTATE_LISTING_API_KEY ? '매물 API 키는 감지됐지만 전세 매물 재고 조회 어댑터는 아직 연결되지 않았습니다.' : '전세물건 급감 탐지는 네이버부동산 등 매물 재고 API 또는 제휴 데이터 연결 후 활성화됩니다.'
+    }
+  };
   const warnings = [];
 
   for (const region of RISK_SCAN_REGIONS) {
@@ -933,6 +951,9 @@ app.get('/api/risk-scan', async (req, res) => {
     jeonseAlerts: jeonseAlerts.slice(0, 10),
     priceSpikes: priceSpikes.slice(0, 8),
     volumeSignals: volumeSignals.slice(0, 5),
+    kbPriceInversions,
+    rentSupplyDrops,
+    sourceStatus,
     warnings: warnings.slice(0, 5),
     scannedRegions: RISK_SCAN_REGIONS.length,
     scanDate: new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })

@@ -8,6 +8,9 @@ const RiskSignalGuide = () => {
     jeonseAlerts: [],
     priceSpikes: [],
     volumeSignals: [],
+    kbPriceInversions: [],
+    rentSupplyDrops: [],
+    sourceStatus: {},
     warnings: [],
     scannedRegions: 0,
     scanDate: ''
@@ -33,6 +36,9 @@ const RiskSignalGuide = () => {
             jeonseAlerts: Array.isArray(payload.jeonseAlerts) ? payload.jeonseAlerts : [],
             priceSpikes: Array.isArray(payload.priceSpikes) ? payload.priceSpikes : [],
             volumeSignals: Array.isArray(payload.volumeSignals) ? payload.volumeSignals : [],
+            kbPriceInversions: Array.isArray(payload.kbPriceInversions) ? payload.kbPriceInversions : [],
+            rentSupplyDrops: Array.isArray(payload.rentSupplyDrops) ? payload.rentSupplyDrops : [],
+            sourceStatus: payload.sourceStatus || {},
             warnings: Array.isArray(payload.warnings) ? payload.warnings : [],
             scannedRegions: Number(payload.scannedRegions) || 0,
             scanDate: payload.scanDate || ''
@@ -45,6 +51,9 @@ const RiskSignalGuide = () => {
             jeonseAlerts: [],
             priceSpikes: [],
             volumeSignals: [],
+            kbPriceInversions: [],
+            rentSupplyDrops: [],
+            sourceStatus: {},
             warnings: [],
             scannedRegions: 0,
             scanDate: ''
@@ -62,8 +71,12 @@ const RiskSignalGuide = () => {
   const totals = useMemo(() => ({
     jeonse: scanData.jeonseAlerts.length,
     spikes: scanData.priceSpikes.length,
-    volume: scanData.volumeSignals.length
+    volume: scanData.volumeSignals.length,
+    kb: scanData.kbPriceInversions.length,
+    rentSupply: scanData.rentSupplyDrops.length
   }), [scanData]);
+
+  const sourceStatus = scanData.sourceStatus || {};
 
   const formatPrice = (value) => {
     const amount = Number(value) || 0;
@@ -117,7 +130,7 @@ const RiskSignalGuide = () => {
         <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-3">
           <Info size={16} className="text-blue-600" /> 위험 신호 판정 기준
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 text-[11px]">
           <div className="p-3 rounded-xl bg-red-50 border border-red-100">
             <div className="font-black text-red-600 mb-1">전세가율 경보</div>
             <div className="text-slate-600 leading-relaxed">주의 70% 이상 · 위험 80% 이상 · 초고위험 90% 이상</div>
@@ -129,6 +142,14 @@ const RiskSignalGuide = () => {
           <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
             <div className="font-black text-purple-600 mb-1">거래량 급증</div>
             <div className="text-slate-600 leading-relaxed">최근 월 거래건수가 직전 월 대비 2배 이상일 때 감지</div>
+          </div>
+          <div className="p-3 rounded-xl bg-amber-50 border border-amber-100">
+            <div className="font-black text-amber-600 mb-1">KB시세 역전</div>
+            <div className="text-slate-600 leading-relaxed">KB시세 대비 실거래가·호가가 ±10% 이상 벌어질 때 감지</div>
+          </div>
+          <div className="p-3 rounded-xl bg-rose-50 border border-rose-100">
+            <div className="font-black text-rose-600 mb-1">전세물건 급감</div>
+            <div className="text-slate-600 leading-relaxed">전세 매물수가 직전 기준 대비 30% 이상 줄 때 감지</div>
           </div>
         </div>
       </section>
@@ -231,8 +252,46 @@ const RiskSignalGuide = () => {
       <section className="bg-white p-5 rounded-[20px] shadow-sm border border-slate-100 space-y-4">
         <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 border-b border-slate-50 pb-2">
           <BarChart3 size={16} className="text-purple-600" /> 추가 급등 조짐
-          <span className="ml-auto text-[10px] text-slate-400 font-medium">거래량 이상 신호</span>
+          <span className="ml-auto text-[10px] text-slate-400 font-medium">시세·매물·거래량 이상 신호</span>
         </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="p-3 rounded-xl border bg-amber-50 border-amber-100">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-[11px] font-black text-amber-700">KB시세 역전 단지</span>
+              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black ${sourceStatus.kbPrice?.enabled ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                {sourceStatus.kbPrice?.enabled ? '연결 대기' : '소스 미연동'}
+              </span>
+            </div>
+            {scanData.kbPriceInversions.length === 0 ? (
+              <p className="text-[10px] text-slate-500 leading-relaxed">{sourceStatus.kbPrice?.message || 'KB 시세 데이터 연결 후 실제 역전 단지가 표시됩니다.'}</p>
+            ) : (
+              <div className="space-y-2">
+                {scanData.kbPriceInversions.map((item, index) => (
+                  <div key={`${item.apt}-${index}`} className="text-[11px] text-slate-700 font-bold">{item.apt} · {item.gapRate}%</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="p-3 rounded-xl border bg-rose-50 border-rose-100">
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-[11px] font-black text-rose-700">전세물건 급감 단지</span>
+              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black ${sourceStatus.rentListings?.enabled ? 'bg-rose-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
+                {sourceStatus.rentListings?.enabled ? '연결 대기' : '소스 미연동'}
+              </span>
+            </div>
+            {scanData.rentSupplyDrops.length === 0 ? (
+              <p className="text-[10px] text-slate-500 leading-relaxed">{sourceStatus.rentListings?.message || '전세 매물 재고 데이터 연결 후 실제 급감 단지가 표시됩니다.'}</p>
+            ) : (
+              <div className="space-y-2">
+                {scanData.rentSupplyDrops.map((item, index) => (
+                  <div key={`${item.apt}-${index}`} className="text-[11px] text-slate-700 font-bold">{item.apt} · {item.dropRate}% 감소</div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         {loading ? (
           <div className="text-sm text-slate-500 font-bold">스캔 데이터 로딩 중...</div>
@@ -261,7 +320,7 @@ const RiskSignalGuide = () => {
         <h4 className="text-sm font-bold flex items-center gap-2">
           <ShieldCheck size={14} /> 실시간 스캔 요약
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2 text-[11px]">
           <div className="p-2.5 rounded-lg bg-white/10 space-y-1">
             <div className="font-bold text-red-400">전세가율 경보</div>
             <div className="text-slate-300">{totals.jeonse}건</div>
@@ -273,6 +332,14 @@ const RiskSignalGuide = () => {
           <div className="p-2.5 rounded-lg bg-white/10 space-y-1">
             <div className="font-bold text-purple-400">거래량 급증</div>
             <div className="text-slate-300">{totals.volume}건</div>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/10 space-y-1">
+            <div className="font-bold text-amber-400">KB시세 역전</div>
+            <div className="text-slate-300">{totals.kb}건</div>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/10 space-y-1">
+            <div className="font-bold text-rose-400">전세물건 급감</div>
+            <div className="text-slate-300">{totals.rentSupply}건</div>
           </div>
         </div>
         <p className="text-[9px] text-slate-500 text-right">

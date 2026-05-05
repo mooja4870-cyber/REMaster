@@ -143,3 +143,5 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [2026-05-06 01:12:00] v4.5.3 Risk Criteria Label: Added visible risk signal criteria to the Risk Signal dashboard and synchronized package/server version.
 
 - [2026-05-06 01:25:00] v4.5.4 Sidebar Scroll Fix: Enabled independent vertical scrolling on the fixed-height sidebar so lower Pro System evidence rows remain reachable on shorter viewports.
+
+- [2026-05-06 01:32:00] v4.5.5 Risk Signal Sources: Added KB price inversion and rent-listing drop slots to the risk dashboard with explicit live data source status, no mock values.
