@@ -65,8 +65,9 @@ const App = () => {
   ];
 
   const rawCounts = analysisResult?.realDataMeta?.molit?.rawCounts || {};
-  const isApartmentEvidence = activeTab === 'apartment' && Boolean(analysisResult?.realDataMeta?.molit);
-  const isVillaEvidence = activeTab === 'villa' && Boolean(analysisResult?.realDataMeta?.molit);
+  const molitMeta = analysisResult?.realDataMeta?.molit;
+  const isApartmentEvidence = molitMeta?.assetType === 'apartment';
+  const isVillaEvidence = molitMeta?.assetType === 'villa';
   const sourceEvidence = [
     { label: '국토교통부_아파트 매매 실거래가 상세 자료', active: isApartmentEvidence && rawCounts.trade > 0 },
     { label: '국토교통부_아파트 전월세 실거래가 자료', active: isApartmentEvidence && rawCounts.rent > 0 },
@@ -345,7 +346,7 @@ const App = () => {
         <footer className="mt-auto p-8 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold tracking-widest bg-white">
           <div>© 2026 Real Estate Master Analyst System</div>
           <div className="flex gap-6">
-            <span>Last Updated: 2026.05.05 14:25</span>
+            <span>Last Updated: 2026.05.05 15:36</span>
             <span>Region: KR-SEOUL</span>
           </div>
         </footer>

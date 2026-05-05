@@ -53,6 +53,7 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [x] Multi-role AI Orchestration (Apartment, Policy, Villa, Fact-check).
 
 ## Version History
+- [2026-05-05 15:36:00] v2.1.8 Hotfix: `분당구 아파트` 조회 시 법정동코드가 분당구 41135가 아니라 기본값 강남구 11680으로 fallback되던 문제 수정. 분당구/판교/정자동/서현동 등 주요 분당 alias를 41135로 매핑하고, Pro System O/X 판단을 탭 상태가 아닌 실제 리포트 `realDataMeta.molit.assetType` 기준으로 변경.
 - [2026-05-05 14:25:00] v2.1.7 UI Update: Pro System 카드에 서버 연결 상태가 아닌 현재 분석 리포트의 국토부 근거 자료 기준 O/X 표시 추가. 아파트 분석이면 아파트 매매/전월세 실거래가 자료 사용 여부를 O로, 빌라/연립다세대 분석이면 연립다세대 매매/전월세 실거래가 자료 사용 여부를 O로 표시.
 - [2026-05-05 13:50:00] v2.1.6 Hotfix: Gemini Google Search grounding 응답이 JSON이 아닌 설명문으로 반환될 때 분석 API가 500으로 실패하던 문제 수정. 검색 grounding 1차 호출은 유지하고, JSON 파싱 실패 시 도구 없는 2차 Gemini structured-output 정리 호출로 최종 리포트 JSON을 안정화.
 - [2026-05-05 13:53:00] v2.1.6 Verification: 국토교통부 4개 API 직접 호출 재검증 완료. 아파트 매매 상세, 아파트 전월세, 연립다세대 매매, 연립다세대 전월세 모두 HTTP 200 및 item 10건 수신 확인. 서버 `/api/analyze` 강남구 아파트 실분석도 매매 5건/전월세 3건 반영 성공.

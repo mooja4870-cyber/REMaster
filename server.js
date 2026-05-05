@@ -104,6 +104,24 @@ const resolveLawdCode = (query = '') => {
   const explicit = String(query).match(/\b\d{5}\b/);
   if (explicit) return { code: explicit[0], label: explicit[0], confidence: 'explicit' };
 
+  const aliasMap = [
+    ['분당구', '41135'],
+    ['성남분당구', '41135'],
+    ['판교', '41135'],
+    ['정자동', '41135'],
+    ['서현동', '41135'],
+    ['수내동', '41135'],
+    ['야탑동', '41135'],
+    ['이매동', '41135'],
+    ['구미동', '41135'],
+    ['백현동', '41135'],
+    ['삼평동', '41135'],
+    ['운중동', '41135'],
+    ['대장동', '41135']
+  ];
+  const alias = aliasMap.find(([name]) => compact.includes(normalizeText(name)));
+  if (alias) return { code: alias[1], label: alias[0], confidence: 'alias' };
+
   const complexHint = COMPLEX_HINTS.find(([name]) => compact.includes(normalizeText(name)));
   if (complexHint) return { code: complexHint[1], label: complexHint[0], confidence: 'complex-hint' };
 
@@ -220,6 +238,7 @@ const collectMolitTransactions = async (query, type) => {
   return {
     enabled: true,
     lawd,
+    assetType,
     months,
     prices,
     rentals,
@@ -396,6 +415,7 @@ const mergeRealData = (analysis, molitData, grounding) => {
     realDataMeta: {
       molit: {
         lawd: molitData.lawd,
+        assetType: molitData.assetType,
         months: molitData.months,
         rawCounts: molitData.rawCounts,
         warnings: molitData.warnings
@@ -408,7 +428,7 @@ const mergeRealData = (analysis, molitData, grounding) => {
 app.get('/api/health', (_, res) => {
   res.json({
     ok: true,
-    version: '2.1.7',
+    version: '2.1.8',
     molit: Object.values(MOLIT_API_KEYS).some(Boolean),
     molitServices: Object.fromEntries(Object.entries(MOLIT_API_KEYS).map(([name, key]) => [name, Boolean(key)])),
     geminiGrounding: Boolean(GEMINI_API_KEY),
