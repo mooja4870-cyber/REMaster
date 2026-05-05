@@ -234,8 +234,8 @@ const App = () => {
         {showRiskGuide && <ModalShell onClose={() => setShowRiskGuide(false)}><RiskSignalGuide /></ModalShell>}
       </AnimatePresence>
 
-      <div className="flex h-screen bg-[#f4f6fa] text-[#0f2040] overflow-hidden font-sans">
-        <aside className="w-72 border-r border-[#e2e8f0] p-6 flex flex-col gap-8 bg-white shadow-sm z-20">
+      <div className="flex h-screen min-h-0 bg-[#f4f6fa] text-[#0f2040] overflow-hidden font-sans">
+        <aside className="w-72 h-screen min-h-0 shrink-0 border-r border-[#e2e8f0] p-6 flex flex-col gap-8 bg-white shadow-sm z-20 overflow-y-auto overflow-x-hidden">
           <div className="flex items-center gap-3 px-2">
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
               <TrendingUp size={24} className="text-white" />
