@@ -11,16 +11,22 @@ app.use(express.json({ limit: '1mb' }));
 const PORT = Number(process.env.PORT || 3001);
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const MOLIT_API_KEY = process.env.MOLIT_API_KEY || process.env.DATA_GO_KR_SERVICE_KEY || process.env.PUBLIC_DATA_API_KEY || '';
+const MOLIT_API_KEYS = {
+  apartmentTrade: process.env.MOLIT_APT_TRADE_API_KEY || MOLIT_API_KEY,
+  apartmentRent: process.env.MOLIT_APT_RENT_API_KEY || MOLIT_API_KEY,
+  villaTrade: process.env.MOLIT_VILLA_TRADE_API_KEY || MOLIT_API_KEY,
+  villaRent: process.env.MOLIT_VILLA_RENT_API_KEY || MOLIT_API_KEY
+};
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
 const MOLIT_ENDPOINTS = {
   apartment: {
-    trade: 'http://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev',
-    rent: 'http://apis.data.go.kr/1613000/RTMSDataSvcAptRent/getRTMSDataSvcAptRent'
+    trade: { url: 'https://apis.data.go.kr/1613000/RTMSDataSvcAptTradeDev/getRTMSDataSvcAptTradeDev', key: 'apartmentTrade' },
+    rent: { url: 'https://apis.data.go.kr/1613000/RTMSDataSvcAptRent/getRTMSDataSvcAptRent', key: 'apartmentRent' }
   },
   villa: {
-    trade: 'http://apis.data.go.kr/1613000/RTMSDataSvcRHTrade/getRTMSDataSvcRHTrade',
-    rent: 'http://apis.data.go.kr/1613000/RTMSDataSvcRHRent/getRTMSDataSvcRHRent'
+    trade: { url: 'https://apis.data.go.kr/1613000/RTMSDataSvcRHTrade/getRTMSDataSvcRHTrade', key: 'villaTrade' },
+    rent: { url: 'https://apis.data.go.kr/1613000/RTMSDataSvcRHRent/getRTMSDataSvcRHRent', key: 'villaRent' }
   }
 };
 
@@ -154,14 +160,15 @@ const formatRentItem = (row, assetType) => {
   };
 };
 
-const buildMolitUrl = (endpoint, params) => {
-  const key = MOLIT_API_KEY.includes('%') ? MOLIT_API_KEY : encodeURIComponent(MOLIT_API_KEY);
+const buildMolitUrl = (endpoint, params, apiKey = MOLIT_API_KEY) => {
+  const key = apiKey.includes('%') ? apiKey : encodeURIComponent(apiKey);
   const query = new URLSearchParams({ ...params, pageNo: '1', numOfRows: '100' });
   return `${endpoint}?serviceKey=${key}&${query.toString()}`;
 };
 
-const fetchMolitEndpoint = async (endpoint, lawdCode, dealYmd) => {
-  const response = await fetch(buildMolitUrl(endpoint, { LAWD_CD: lawdCode, DEAL_YMD: dealYmd }), {
+const fetchMolitEndpoint = async (endpoint, apiKey, lawdCode, dealYmd) => {
+  if (!apiKey) throw new Error('MOLIT API key missing for endpoint');
+  const response = await fetch(buildMolitUrl(endpoint, { LAWD_CD: lawdCode, DEAL_YMD: dealYmd }, apiKey), {
     headers: { Accept: 'application/xml,text/xml,*/*' }
   });
   const text = await response.text();
@@ -173,7 +180,7 @@ const fetchMolitEndpoint = async (endpoint, lawdCode, dealYmd) => {
 };
 
 const collectMolitTransactions = async (query, type) => {
-  if (!MOLIT_API_KEY) {
+  if (!Object.values(MOLIT_API_KEYS).some(Boolean)) {
     return { enabled: false, prices: [], rentals: [], lawd: resolveLawdCode(query), months: [], warnings: ['MOLIT_API_KEY 또는 DATA_GO_KR_SERVICE_KEY가 없습니다.'] };
   }
 
@@ -181,6 +188,8 @@ const collectMolitTransactions = async (query, type) => {
   const lawd = resolveLawdCode(query);
   const months = getRecentMonths(12);
   const endpoints = MOLIT_ENDPOINTS[assetType];
+  const tradeKey = MOLIT_API_KEYS[endpoints.trade.key];
+  const rentKey = MOLIT_API_KEYS[endpoints.rent.key];
   const warnings = [];
   const tradeRows = [];
   const rentRows = [];
@@ -188,14 +197,14 @@ const collectMolitTransactions = async (query, type) => {
   for (const dealYmd of months) {
     if (tradeRows.length < 15) {
       try {
-        tradeRows.push(...await fetchMolitEndpoint(endpoints.trade, lawd.code, dealYmd));
+        tradeRows.push(...await fetchMolitEndpoint(endpoints.trade.url, tradeKey, lawd.code, dealYmd));
       } catch (error) {
         warnings.push(`${dealYmd} 매매 조회 실패: ${error.message}`);
       }
     }
     if (rentRows.length < 10) {
       try {
-        rentRows.push(...await fetchMolitEndpoint(endpoints.rent, lawd.code, dealYmd));
+        rentRows.push(...await fetchMolitEndpoint(endpoints.rent.url, rentKey, lawd.code, dealYmd));
       } catch (error) {
         warnings.push(`${dealYmd} 전월세 조회 실패: ${error.message}`);
       }
@@ -229,6 +238,35 @@ const extractJson = (text = '') => {
   }
 };
 
+const callGeminiJsonFormatter = async (prompt, groundedText = '') => {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
+    method: 'POST',
+    headers: {
+      'x-goog-api-key': GEMINI_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: `Convert the grounded analysis below into the exact JSON object requested by the original prompt. Return JSON only.\n\nOriginal prompt:\n${prompt}\n\nGrounded analysis:\n${groundedText}`
+        }]
+      }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        temperature: 0.1
+      }
+    })
+  });
+
+  const payload = await response.json();
+  if (!response.ok) {
+    throw new Error(payload?.error?.message || `Gemini JSON formatter ${response.status}`);
+  }
+
+  const text = payload.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('\n') || '';
+  return extractJson(text);
+};
+
 const callGeminiGrounded = async (prompt) => {
   if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY가 .env 파일에 설정되지 않았습니다.');
 
@@ -242,7 +280,6 @@ const callGeminiGrounded = async (prompt) => {
       contents: [{ parts: [{ text: prompt }] }],
       tools: [{ google_search: {} }],
       generationConfig: {
-        responseMimeType: 'application/json',
         temperature: 0.25
       }
     })
@@ -255,8 +292,15 @@ const callGeminiGrounded = async (prompt) => {
 
   const candidate = payload.candidates?.[0] || {};
   const text = candidate.content?.parts?.map((part) => part.text || '').join('\n') || '';
+  let data;
+  try {
+    data = extractJson(text);
+  } catch (_) {
+    data = await callGeminiJsonFormatter(prompt, text);
+  }
+
   return {
-    data: extractJson(text),
+    data,
     grounding: candidate.groundingMetadata || {}
   };
 };
@@ -364,8 +408,9 @@ const mergeRealData = (analysis, molitData, grounding) => {
 app.get('/api/health', (_, res) => {
   res.json({
     ok: true,
-    version: '2.1.3',
-    molit: Boolean(MOLIT_API_KEY),
+    version: '2.1.6',
+    molit: Object.values(MOLIT_API_KEYS).some(Boolean),
+    molitServices: Object.fromEntries(Object.entries(MOLIT_API_KEYS).map(([name, key]) => [name, Boolean(key)])),
     geminiGrounding: Boolean(GEMINI_API_KEY),
     model: GEMINI_MODEL
   });

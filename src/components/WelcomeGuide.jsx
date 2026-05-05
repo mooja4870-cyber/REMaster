@@ -22,7 +22,7 @@ const WelcomeGuide = ({ onComplete }) => {
             <TrendingUp size={28} className="text-white" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-white">RE Master Analyst v2.1.3</h2>
+            <h2 className="text-2xl font-bold text-white">RE Master Analyst v2.1.6</h2>
             <p className="text-blue-400 text-sm font-medium">Professional AI Real Estate Engine</p>
           </div>
         </div>

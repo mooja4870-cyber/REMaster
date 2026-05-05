@@ -325,7 +325,7 @@ const App = () => {
         <footer className="mt-auto p-8 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold tracking-widest bg-white">
           <div>© 2026 Real Estate Master Analyst System</div>
           <div className="flex gap-6">
-            <span>Last Updated: 2026.05.05 13:19</span>
+            <span>Last Updated: 2026.05.05 13:50</span>
             <span>Region: KR-SEOUL</span>
           </div>
         </footer>

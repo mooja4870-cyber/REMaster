@@ -53,6 +53,10 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [x] Multi-role AI Orchestration (Apartment, Policy, Villa, Fact-check).
 
 ## Version History
+- [2026-05-05 13:50:00] v2.1.6 Hotfix: Gemini Google Search grounding 응답이 JSON이 아닌 설명문으로 반환될 때 분석 API가 500으로 실패하던 문제 수정. 검색 grounding 1차 호출은 유지하고, JSON 파싱 실패 시 도구 없는 2차 Gemini structured-output 정리 호출로 최종 리포트 JSON을 안정화.
+- [2026-05-05 13:53:00] v2.1.6 Verification: 국토교통부 4개 API 직접 호출 재검증 완료. 아파트 매매 상세, 아파트 전월세, 연립다세대 매매, 연립다세대 전월세 모두 HTTP 200 및 item 10건 수신 확인. 서버 `/api/analyze` 강남구 아파트 실분석도 매매 5건/전월세 3건 반영 성공.
+- [2026-05-05 13:48:00] v2.1.5 Hotfix: 국토부 실거래가 4개 API 직접 호출 검증 결과 아파트 매매/전월세는 OK, 연립다세대 매매/전월세는 현재 키 기준 403으로 분리 확인. 공공데이터포털이 서비스별 인증키를 다르게 제공하는 경우를 지원하도록 `MOLIT_APT_TRADE_API_KEY`, `MOLIT_APT_RENT_API_KEY`, `MOLIT_VILLA_TRADE_API_KEY`, `MOLIT_VILLA_RENT_API_KEY` 선택 환경변수를 추가하고, 없으면 기존 `MOLIT_API_KEY`를 공통 fallback으로 사용.
+- [2026-05-05 13:45:00] v2.1.4 Hotfix: 국토교통부 4개 실거래가 API 활용승인 후 실제 분석 호출 검증 중 Gemini Google Search 도구와 `responseMimeType: application/json` 동시 사용 충돌로 500 오류가 발생하던 문제 수정. Grounding 호출에서는 JSON MIME 강제 옵션을 제거하고, 기존 프롬프트 기반 JSON 추출 로직으로 파싱하도록 조정.
 - [2026-05-05 13:19:06] v2.1.3 Hotfix: 시장/대시보드 리포트 렌더링 중 `macroIndicators.riskFactors`가 없을 때 `riskFactors[0]` 접근으로 발생하던 "Cannot read properties of undefined (reading '0')" 오류 수정. `macroIndicators`, `marketTemperature`, `riskFactors`를 안전 기본값으로 정규화하고 `?.[0]` 배열 접근으로 방어.
 - [2026-05-05 13:15:16] v2.1.2 Hotfix: Pro System 카드의 화면 노출 버전 배지를 삭제. 앞으로 해당 카드에는 "Pro System"과 "실시간 데이터 연동 및 다층 분석 엔진 가동 중"만 표시하고, 버전 정보는 패키지/서버/웰컴 모달 등 내부 관리 위치에만 유지.
 - v1.5.0: Final Release of 30-Step Master Plan. Scenario analysis & full packaging complete.
