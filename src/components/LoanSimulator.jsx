@@ -1,5 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Calculator, Wallet, ShieldCheck, Percent, Calendar, AlertCircle } from 'lucide-react';
+import { Calculator, Wallet, ShieldCheck, Percent, Calendar, AlertCircle, Info } from 'lucide-react';
+
+const loanInputs = ({ homePrice, ltvLimit, income, otherLoans, interestRate, loanTerm, setHomePrice, setLtvLimit, setIncome, setOtherLoans, setInterestRate, setLoanTerm, formatCurrency }) => [
+  { label: '주택 매매 가격', value: homePrice, setter: setHomePrice, min: 10000, max: 300000, step: 5000, display: formatCurrency(homePrice) },
+  { label: 'LTV 한도', value: ltvLimit, setter: setLtvLimit, min: 20, max: 80, step: 5, display: `${ltvLimit}%`, hasInfo: true },
+  { label: '연 소득', value: income, setter: setIncome, min: 2000, max: 30000, step: 500, display: formatCurrency(income) },
+  { label: '기존 연간 대출 상환액', value: otherLoans, setter: setOtherLoans, min: 0, max: 10000, step: 100, display: formatCurrency(otherLoans) },
+  { label: '금리', value: interestRate, setter: setInterestRate, min: 2, max: 8, step: 0.1, display: `${interestRate}%` },
+  { label: '대출 기간', value: loanTerm, setter: setLoanTerm, min: 5, max: 40, step: 5, display: `${loanTerm}년` },
+];
+
+const LtvTooltip = () => (
+  <span className="relative inline-flex group">
+    <Info size={13} className="text-blue-500 cursor-help" />
+    <span className="pointer-events-none absolute left-1/2 bottom-full z-50 mb-2 hidden w-72 -translate-x-1/2 rounded-xl border border-slate-200 bg-white p-3 text-[11px] leading-relaxed text-slate-600 shadow-xl group-hover:block">
+      <span className="block font-black text-slate-800 mb-1">LTV(Loan To Value) 한도</span>
+      주택가격 대비 담보대출 가능 비율입니다. 예를 들어 주택가격이 10억원이고 LTV가 70%라면 최대 대출 가능액은 약 7억원입니다.
+      실제 한도는 규제지역, 생애최초 여부, 주택 수, DSR, 은행 심사에 따라 달라질 수 있습니다.
+    </span>
+  </span>
+);
 
 const LoanSimulator = () => {
   const [homePrice, setHomePrice] = useState(100000);
@@ -13,6 +33,16 @@ const LoanSimulator = () => {
   const [monthlyPayment, setMonthlyPayment] = useState(0);
   const [totalInterest, setTotalInterest] = useState(0);
   const [dsrRatio, setDsrRatio] = useState(0);
+
+  const formatCurrency = (value) => {
+    const amount = Number(value) || 0;
+    if (amount >= 10000) {
+      const eok = Math.floor(amount / 10000);
+      const man = amount % 10000;
+      return man > 0 ? `${eok}억 ${man.toLocaleString()}만원` : `${eok}억원`;
+    }
+    return `${amount.toLocaleString()}만원`;
+  };
 
   useEffect(() => {
     const ltvMax = (homePrice * ltvLimit) / 100;
@@ -38,18 +68,9 @@ const LoanSimulator = () => {
     setDsrRatio(Number.isFinite(dsr) ? dsr.toFixed(1) : 0);
   }, [homePrice, ltvLimit, income, otherLoans, interestRate, loanTerm, repaymentMethod]);
 
-  const formatCurrency = (value) => {
-    const amount = Number(value) || 0;
-    if (amount >= 10000) {
-      const eok = Math.floor(amount / 10000);
-      const man = amount % 10000;
-      return man > 0 ? `${eok}억 ${man.toLocaleString()}만원` : `${eok}억원`;
-    }
-    return `${amount.toLocaleString()}만원`;
-  };
-
   const dsrStatus = Number(dsrRatio) <= 40 ? '안정' : Number(dsrRatio) <= 60 ? '주의' : '위험';
   const dsrColor = dsrStatus === '안정' ? 'text-emerald-600' : dsrStatus === '주의' ? 'text-amber-600' : 'text-red-600';
+  const inputs = loanInputs({ homePrice, ltvLimit, income, otherLoans, interestRate, loanTerm, setHomePrice, setLtvLimit, setIncome, setOtherLoans, setInterestRate, setLoanTerm, formatCurrency });
 
   return (
     <div className="space-y-4 animate-in fade-in duration-700">
@@ -74,26 +95,22 @@ const LoanSimulator = () => {
             <Wallet size={14} className="text-blue-600" /> 주택 및 소득 정보
           </h3>
 
-          {[
-            ['주택 매매 가격', homePrice, setHomePrice, 10000, 300000, 5000, formatCurrency(homePrice)],
-            ['LTV 한도', ltvLimit, setLtvLimit, 20, 80, 5, `${ltvLimit}%`],
-            ['연 소득', income, setIncome, 2000, 30000, 500, formatCurrency(income)],
-            ['기존 연간 대출 상환액', otherLoans, setOtherLoans, 0, 10000, 100, formatCurrency(otherLoans)],
-            ['금리', interestRate, setInterestRate, 2, 8, 0.1, `${interestRate}%`],
-            ['대출 기간', loanTerm, setLoanTerm, 5, 40, 5, `${loanTerm}년`],
-          ].map(([label, value, setter, min, max, step, display]) => (
-            <div key={label} className="space-y-1.5">
+          {inputs.map((input) => (
+            <div key={input.label} className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-600">{label}</label>
-                <span className="text-blue-600 font-bold text-sm">{display}</span>
+                <div className="flex items-center gap-1.5">
+                  <label className="text-xs font-bold text-slate-600">{input.label}</label>
+                  {input.hasInfo && <LtvTooltip />}
+                </div>
+                <span className="text-blue-600 font-bold text-sm">{input.display}</span>
               </div>
               <input
                 type="range"
-                min={min}
-                max={max}
-                step={step}
-                value={value}
-                onChange={(event) => setter(Number(event.target.value))}
+                min={input.min}
+                max={input.max}
+                step={input.step}
+                value={input.value}
+                onChange={(event) => input.setter(Number(event.target.value))}
                 className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600"
               />
             </div>
