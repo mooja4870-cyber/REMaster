@@ -17,6 +17,10 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
   // Helper for safe data access
   const d = result.data || {};
   const guide = result.decisionGuide || d.decisionGuide || {};
+  const macro = result.macroIndicators || {};
+  const marketTemperature = macro.marketTemperature || {};
+  const marketTempScore = Number(marketTemperature.score) || 0;
+  const priceRiskFactors = macro.riskFactors || result.aiForecast?.riskFactors || [];
 
   return (
     <div className="flex flex-col gap-6 pb-20 text-[var(--fg1)] font-sans">
@@ -67,17 +71,17 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
           <div className="card">
             <span className="text-xs font-bold text-[var(--fg3)] uppercase block mb-3">현재 시장 온도</span>
             <div className="flex justify-between items-end">
-              <span className="text-3xl font-black">{result.macroIndicators?.marketTemperature?.score}점</span>
-              <span className={`badge ${result.macroIndicators?.marketTemperature?.trend === 'Rising' ? 'badge-양호' : 'badge-주의'}`}>
-                {result.macroIndicators?.marketTemperature?.status}
+              <span className="text-3xl font-black">{marketTempScore}점</span>
+              <span className={`badge ${marketTemperature.trend === 'Rising' ? 'badge-양호' : 'badge-주의'}`}>
+                {marketTemperature.status || '확인 필요'}
               </span>
             </div>
-            <div className="score-bar medium mt-3"><div style={{ width: `${result.macroIndicators?.marketTemperature?.score}%` }} /></div>
+            <div className="score-bar medium mt-3"><div style={{ width: `${marketTempScore}%` }} /></div>
           </div>
           <div className="card">
             <span className="text-xs font-bold text-[var(--fg3)] uppercase block mb-3">핵심 리스크 요인</span>
-            <div className="text-lg font-bold">{result.macroIndicators?.riskFactors[0] || '공급 과잉'}</div>
-            <div className="text-sm text-[var(--fg2)] mt-1">{result.macroIndicators?.riskFactors[1] || '금리 인상'}</div>
+            <div className="text-lg font-bold">{priceRiskFactors?.[0] || '공급 과잉'}</div>
+            <div className="text-sm text-[var(--fg2)] mt-1">{priceRiskFactors?.[1] || '금리 인상'}</div>
           </div>
         </div>
       )}
