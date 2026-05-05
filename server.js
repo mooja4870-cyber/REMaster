@@ -408,7 +408,7 @@ const mergeRealData = (analysis, molitData, grounding) => {
 app.get('/api/health', (_, res) => {
   res.json({
     ok: true,
-    version: '2.1.6',
+    version: '2.1.7',
     molit: Object.values(MOLIT_API_KEYS).some(Boolean),
     molitServices: Object.fromEntries(Object.entries(MOLIT_API_KEYS).map(([name, key]) => [name, Boolean(key)])),
     geminiGrounding: Boolean(GEMINI_API_KEY),

@@ -64,6 +64,16 @@ const App = () => {
     { id: 'factcheck', label: '팩트체크 & 리스크', icon: ShieldCheck },
   ];
 
+  const rawCounts = analysisResult?.realDataMeta?.molit?.rawCounts || {};
+  const isApartmentEvidence = activeTab === 'apartment' && Boolean(analysisResult?.realDataMeta?.molit);
+  const isVillaEvidence = activeTab === 'villa' && Boolean(analysisResult?.realDataMeta?.molit);
+  const sourceEvidence = [
+    { label: '국토교통부_아파트 매매 실거래가 상세 자료', active: isApartmentEvidence && rawCounts.trade > 0 },
+    { label: '국토교통부_아파트 전월세 실거래가 자료', active: isApartmentEvidence && rawCounts.rent > 0 },
+    { label: '국토교통부_연립다세대 매매 실거래가 자료', active: isVillaEvidence && rawCounts.trade > 0 },
+    { label: '국토교통부_연립다세대 전월세 실거래가 자료', active: isVillaEvidence && rawCounts.rent > 0 },
+  ];
+
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
       startAnalysis(searchQuery);
@@ -171,9 +181,19 @@ const App = () => {
                 <span className="text-xs font-bold text-blue-600 uppercase">Pro System</span>
               </div>
             </div>
-            <p className="text-xs text-blue-800/70 leading-relaxed">
-              실시간 데이터 연동 및 다층 분석 엔진 가동 중
-            </p>
+            <div className="text-xs text-blue-800/70 leading-relaxed">
+              <div className="mb-2">실시간 데이터 연동 및 다층 분석 엔진 가동 중 :</div>
+              <div className="space-y-1">
+                {sourceEvidence.map((source) => (
+                  <div key={source.label} className="flex gap-1.5">
+                    <span className={source.active ? 'font-black text-emerald-600' : 'font-black text-slate-400'}>
+                      {source.active ? 'O' : 'X'}
+                    </span>
+                    <span>{source.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </aside>
@@ -325,7 +345,7 @@ const App = () => {
         <footer className="mt-auto p-8 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold tracking-widest bg-white">
           <div>© 2026 Real Estate Master Analyst System</div>
           <div className="flex gap-6">
-            <span>Last Updated: 2026.05.05 13:50</span>
+            <span>Last Updated: 2026.05.05 14:25</span>
             <span>Region: KR-SEOUL</span>
           </div>
         </footer>
