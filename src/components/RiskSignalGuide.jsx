@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ShieldCheck, AlertTriangle, TrendingUp, Activity, ArrowUpRight, BarChart3, MapPin, Building2 } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, TrendingUp, Activity, ArrowUpRight, BarChart3, MapPin, Building2, Info } from 'lucide-react';
 
 const RiskSignalGuide = () => {
   const [loading, setLoading] = useState(true);
@@ -112,6 +112,26 @@ const RiskSignalGuide = () => {
           실시간 스캔 실패: {error}
         </div>
       )}
+
+      <section className="bg-white p-4 rounded-[20px] shadow-sm border border-slate-100">
+        <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-3">
+          <Info size={16} className="text-blue-600" /> 위험 신호 판정 기준
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
+          <div className="p-3 rounded-xl bg-red-50 border border-red-100">
+            <div className="font-black text-red-600 mb-1">전세가율 경보</div>
+            <div className="text-slate-600 leading-relaxed">주의 70% 이상 · 위험 80% 이상 · 초고위험 90% 이상</div>
+          </div>
+          <div className="p-3 rounded-xl bg-blue-50 border border-blue-100">
+            <div className="font-black text-blue-600 mb-1">거래가 급등</div>
+            <div className="text-slate-600 leading-relaxed">동일 단지·면적 기준 직전 거래 대비 +5% 이상 또는 +1억원 이상</div>
+          </div>
+          <div className="p-3 rounded-xl bg-purple-50 border border-purple-100">
+            <div className="font-black text-purple-600 mb-1">거래량 급증</div>
+            <div className="text-slate-600 leading-relaxed">최근 월 거래건수가 직전 월 대비 2배 이상일 때 감지</div>
+          </div>
+        </div>
+      </section>
 
       {scanData.warnings.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-[16px] p-4 text-xs text-amber-700 space-y-1">

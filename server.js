@@ -705,7 +705,7 @@ const mergeRealData = (analysis, molitData, ecosData, kakaoData, bldgData, kaptD
 app.get('/api/health', (_, res) => {
   res.json({
     ok: true,
-    version: '4.5.2',
+    version: '4.5.3',
     molit: Object.values(MOLIT_API_KEYS).some(Boolean),
     molitServices: Object.fromEntries(Object.entries(MOLIT_API_KEYS).map(([name, key]) => [name, Boolean(key)])),
     ecos: Boolean(ECOS_API_KEY),

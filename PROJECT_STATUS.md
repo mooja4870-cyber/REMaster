@@ -139,3 +139,5 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [2026-05-06 01:03:00] v4.5.2 Version Sync: Bumped package/server health version after LTV tooltip restore; UI version label remains hidden per user rule.
 
 - [2026-05-06 01:07:00] v4.5.2 Welcome Version Label: Added current package version beside Professional Real Estate Intelligence in the RE Master Analyst welcome panel.
+
+- [2026-05-06 01:12:00] v4.5.3 Risk Criteria Label: Added visible risk signal criteria to the Risk Signal dashboard and synchronized package/server version.
