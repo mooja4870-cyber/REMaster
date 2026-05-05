@@ -272,7 +272,7 @@ const App = () => {
                 <span className="text-xs font-bold text-blue-600 uppercase">Pro System</span>
               </div>
               <div className="text-[10px] text-blue-800/80 leading-relaxed font-bold">
-                <div className="mb-2 text-blue-600">실시간 데이터 연동 및 다층 분석 엔진 가동 중 :</div>
+                <div className="mb-2 text-blue-600">실시간 데이터연동 및 다층분석 엔진가동 중 :</div>
                 <div className="space-y-1.5">
                   {sourceEvidence.map((source) => (
                     <div key={source.label} className="flex gap-2 items-center">

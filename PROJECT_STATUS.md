@@ -131,3 +131,5 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [2026-05-06 00:20:00] v4.5.1 Real-Data Cleanup: Removed mock/fallback wording and mock failure payload path in App.jsx/SearchOrchestrator.js, switched RiskSignalGuide.jsx to live /api/risk-scan data only, and aligned Pro System evidence rows to explicit O/X display based on report-grounded MOLIT evidence.
 
 - [2026-05-06 00:40:00] v4.5.1 Encoding Hardening: Restored corrupted Korean UI strings in App, SearchOrchestrator, WelcomeGuide, LoanSimulator, and locationData; added UTF-8 editor/git attributes to prevent mojibake recurrence; rebuilt package lock version metadata.
+
+- [2026-05-06 00:48:00] v4.5.1 UI Text Update: Changed Pro System status phrase to '실시간 데이터연동 및 다층분석 엔진가동 중 :' per user request.
