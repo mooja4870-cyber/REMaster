@@ -72,3 +72,4 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [2026-05-05 12:45:00] v2.0.8 Hotfix: App.jsx 사이드바의 하드코딩된 버전 텍스트(v2.0.6)를 v2.0.8로 동기화 업데이트.
 - [2026-05-05 12:47:00] v2.0.9 Hotfix: WelcomeGuide.jsx, AnalysisReport.jsx, App.jsx 등에 남아있던 이전 버전 및 타임스탬프 하드코딩 일괄 수정(v2.0.9 및 현재 시간 반영).
 - [2026-05-05 12:57:28] v2.1.0 Real Data Bridge: 국토교통부 실거래가 API(MOLIT/DATA_GO_KR key)와 Gemini Google Search grounding을 서버 분석 파이프라인에 우선 연동. `/api/analyze`가 실거래 매매/전월세 데이터를 먼저 수집하고, 해당 원자료를 grounded Gemini 분석에 주입한 뒤 리포트 `data.prices`, `data.rentals`, `searchLog`, `realDataMeta`에 실제 출처를 반영하도록 개선.
+- [2026-05-05 13:11:34] v2.1.1 Hotfix: 실제 화면이 오래된 dist 산출물을 참조해 Pro System 배지가 v2.0.9로 보이던 문제 확인. 소스/서버/패키지/웰컴 모달/푸터 버전을 v2.1.1로 동기화하고 배포 산출물까지 재생성 예정.
