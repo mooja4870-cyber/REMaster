@@ -135,3 +135,5 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [2026-05-06 00:48:00] v4.5.1 UI Text Update: Changed Pro System status phrase to '실시간 데이터연동 및 다층분석 엔진가동 중 :' per user request.
 
 - [2026-05-06 00:52:00] v4.5.1 Loan Tooltip Restore: Restored detailed hover tooltip next to LTV 한도 in LoanSimulator and normalized Korean labels in that component.
+
+- [2026-05-06 01:03:00] v4.5.2 Version Sync: Bumped package/server health version after LTV tooltip restore; UI version label remains hidden per user rule.
