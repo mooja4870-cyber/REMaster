@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import { version } from '../../package.json';
 
 const WelcomeGuide = ({ onComplete }) => {
   const features = [
@@ -27,7 +28,7 @@ const WelcomeGuide = ({ onComplete }) => {
               <TrendingUp size={28} className="text-white" />
             </div>
             <h2 className="text-2xl font-bold text-white">RE Master Analyst</h2>
-            <p className="text-blue-100 text-sm font-medium">Professional Real Estate Intelligence</p>
+            <p className="text-blue-100 text-sm font-medium">Professional Real Estate Intelligence · v{version}</p>
           </div>
 
           <div className="relative z-10 mt-12">
