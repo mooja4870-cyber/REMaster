@@ -53,6 +53,7 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [x] Multi-role AI Orchestration (Apartment, Policy, Villa, Fact-check).
 
 ## Version History
+- [2026-05-05 13:15:16] v2.1.2 Hotfix: Pro System 카드의 화면 노출 버전 배지를 삭제. 앞으로 해당 카드에는 "Pro System"과 "실시간 데이터 연동 및 다층 분석 엔진 가동 중"만 표시하고, 버전 정보는 패키지/서버/웰컴 모달 등 내부 관리 위치에만 유지.
 - v1.5.0: Final Release of 30-Step Master Plan. Scenario analysis & full packaging complete.
 - v1.6.0: Specialized Menu Implementation (Steps 31-36 equivalents). Mode-aware report rendering & Sidebar integration.
 - v1.7.0: Advanced Market Analysis Module (Market Temp, Valuation Metrics, AI Forecast Engine). JSX structure stabilization.

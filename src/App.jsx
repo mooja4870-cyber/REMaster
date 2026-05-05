@@ -170,7 +170,6 @@ const App = () => {
                 <ShieldCheck size={16} className="text-blue-600" />
                 <span className="text-xs font-bold text-blue-600 uppercase">Pro System</span>
               </div>
-              <span className="text-[10px] bg-blue-200 text-blue-700 px-1.5 py-0.5 rounded font-bold">v2.1.1</span>
             </div>
             <p className="text-xs text-blue-800/70 leading-relaxed">
               실시간 데이터 연동 및 다층 분석 엔진 가동 중
@@ -326,7 +325,7 @@ const App = () => {
         <footer className="mt-auto p-8 border-t border-slate-200 flex justify-between items-center text-[10px] text-slate-400 uppercase font-bold tracking-widest bg-white">
           <div>© 2026 Real Estate Master Analyst System</div>
           <div className="flex gap-6">
-            <span>Last Updated: 2026.05.05 13:11</span>
+            <span>Last Updated: 2026.05.05 13:15</span>
             <span>Region: KR-SEOUL</span>
           </div>
         </footer>
