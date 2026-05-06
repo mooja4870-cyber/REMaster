@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertCircle, TrendingUp, TrendingDown, ExternalLink, MapPin, ShieldCheck, FileText, Info, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import { CheckCircle2, AlertCircle, TrendingUp, TrendingDown, ExternalLink, MapPin, ShieldCheck, FileText, Info, ChevronDown, ChevronUp, Search, Download, Printer, Clock } from 'lucide-react';
+import { version } from '../../package.json';
 
 const AnalysisReport = ({ result, mode = 'dashboard' }) => {
   const [showRentals, setShowRentals] = useState(false);
@@ -22,16 +23,71 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
   const marketTempScore = Number(marketTemperature.score) || 0;
   const priceRiskFactors = macro.riskFactors || result.aiForecast?.riskFactors || [];
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="flex flex-col gap-6 pb-20 text-[var(--fg1)] font-sans">
+      {/* 1. PDF Report Cover Page (Print Only) */}
+      <div className="print-only-cover no-print-hidden">
+        <div className="cover-header">
+          <div className="logo-box">RE</div>
+          <div className="brand-name">REAL ESTATE MASTER ANALYST</div>
+        </div>
+        <div className="cover-title-wrap">
+          <p className="subtitle">ARTIFICIAL INTELLIGENCE INVESTMENT REPORT</p>
+          <h1 className="main-title">{result.summary}</h1>
+          <div className="target-location">
+             <MapPin size={24} className="text-blue-500" />
+             <span>{result.rank?.region || '대한민국 주요 권역'} 정밀 입지 분석</span>
+          </div>
+        </div>
+        <div className="cover-footer">
+          <div className="info-grid">
+            <div className="info-item">
+              <span className="label">DATE</span>
+              <span className="value">{new Date().toLocaleDateString('ko-KR')}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">PREPARED BY</span>
+              <span className="value">AI Analyst Engine v{version}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">CONFIDENCE</span>
+              <span className="value">{result.aiForecast?.confidence || '실 데이터 생성 지연'}</span>
+            </div>
+          </div>
+          <p className="copyright">© 2026 Real Estate Master Analyst. All Rights Reserved.</p>
+        </div>
+      </div>
+
+      {/* PDF Print Header (Logo - appears on every page except cover) */}
+      <div className="print-only-header">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-[10px]">RE</div>
+          <span className="text-sm font-bold text-slate-800 tracking-tight">RE Master Intelligence Report</span>
+        </div>
+        <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{result.summary}</div>
+      </div>
       
-      {/* 1. Report Hero */}
+      {/* 2. Report Hero */}
       <div className="report-hero">
-        <h1>{result.summary}</h1>
-        <div className="meta mb-4">
-          <span><MapPin size={14} className="inline mr-1" /> {result.rank?.region || '서울 주요 권역'}</span>
-          <span><b>분석 신뢰도:</b> {result.aiForecast?.confidence || '높음'}</span>
-          <span><b>데이터 기준일:</b> 2026.05.05 12:47</span>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h1 className="text-white">{result.summary}</h1>
+            <div className="meta">
+              <span><MapPin size={14} className="inline mr-1" /> {result.rank?.region || '분석 권역'}</span>
+              <span><b>분석 신뢰도:</b> {result.aiForecast?.confidence || '실 데이터 생성 지연'}</span>
+              <span><Clock size={14} className="inline mr-1 ml-2" /> <b>데이터 기준일:</b> {new Date().toLocaleString('ko-KR')}</span>
+            </div>
+          </div>
+          <button 
+            onClick={handlePrint}
+            className="no-print bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all shadow-xl shadow-blue-500/20"
+          >
+            <Printer size={18} /> 전문 PDF 리포트 다운로드
+          </button>
         </div>
         
         {/* Search Log Banner (Transparent search banner) */}
@@ -64,7 +120,7 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
             <span className="text-xs font-bold text-[var(--fg3)] uppercase block mb-3">AI 6개월 가격 예측</span>
             <div className="flex justify-between items-end">
               <span className={`text-3xl font-black ${result.aiForecast?.prediction6m?.startsWith('+') ? 'text-[var(--color-bull)]' : 'text-[var(--color-bear)]'}`}>
-                {result.aiForecast?.prediction6m || '+3.2%'}
+                {result.aiForecast?.prediction6m || '실 데이터 생성 지연'}
               </span>
             </div>
           </div>
@@ -80,8 +136,33 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
           </div>
           <div className="card">
             <span className="text-xs font-bold text-[var(--fg3)] uppercase block mb-3">핵심 리스크 요인</span>
-            <div className="text-lg font-bold">{priceRiskFactors?.[0] || '공급 과잉'}</div>
-            <div className="text-sm text-[var(--fg2)] mt-1">{priceRiskFactors?.[1] || '금리 인상'}</div>
+            <div className="text-lg font-bold">{priceRiskFactors?.[0] || '실 데이터 생성 지연'}</div>
+            <div className="text-sm text-[var(--fg2)] mt-1">{priceRiskFactors?.[1] || '지연 상황 없음'}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Naver Real-time Asking Prices */}
+      {showPrice && d.naverAskings && d.naverAskings.length > 0 && (
+        <div className="card border-l-4 border-green-500">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-md font-bold flex items-center gap-2">
+              <ExternalLink size={16} className="text-green-600" />
+              네이버 부동산 실시간 호가 (Asking Price)
+            </h3>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Live Scraped Data</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {d.naverAskings.map((item, i) => (
+              <div key={i} className="p-3 bg-slate-50 rounded border border-slate-100">
+                <div className="text-sm font-black text-slate-800 mb-1">{item.price}</div>
+                <div className="text-[10px] text-slate-500 flex justify-between">
+                  <span>{item.floor}</span>
+                  <span className="text-green-600 font-bold">네이버 매물</span>
+                </div>
+                <div className="text-[11px] text-slate-600 mt-2 line-clamp-2">{item.desc}</div>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -203,11 +284,43 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
               ))}
             </div>
           </div>
+
+          {d.dueDiligence && (
+            <div className="mt-8 pt-8 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-4">
+                <ShieldCheck size={18} className="text-blue-600" />
+                <h3 className="text-md font-bold text-slate-800">대법원 등기부/권리분석 팩트체크</h3>
+              </div>
+              <div className={`p-4 rounded-lg border-2 mb-4 ${d.dueDiligence.verdict === '안전' ? 'bg-blue-50 border-blue-200' : d.dueDiligence.verdict === '주의' ? 'bg-amber-50 border-amber-200' : 'bg-rose-50 border-rose-200'}`}>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs font-bold uppercase tracking-wider">Due Diligence Verdict</span>
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-black ${d.dueDiligence.verdict === '안전' ? 'bg-blue-600 text-white' : 'bg-rose-600 text-white'}`}>
+                    {d.dueDiligence.verdict}
+                  </span>
+                </div>
+                <div className="text-sm font-bold text-slate-800 leading-relaxed mb-3">
+                  {d.dueDiligence.summary}
+                </div>
+                {d.dueDiligence.risks && d.dueDiligence.risks.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {d.dueDiligence.risks.map((risk, i) => (
+                      <span key={i} className="text-[10px] px-2 py-1 bg-white/50 border border-current/20 rounded text-slate-600 flex items-center gap-1">
+                        <AlertCircle size={10} /> {risk}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <p className="text-[10px] text-slate-400 italic">
+                * 위 분석은 최근 3개월간의 경매/압류/공고 데이터 및 실시간 뉴스 검색 결과를 기반으로 한 AI 추정치입니다. 실제 권리 관계는 반드시 유료 등기부등본을 발급받아 확인하시기 바랍니다.
+              </p>
+            </div>
+          )}
         </div>
       )}
 
       {/* 5. Investment Decision Guide */}
-      {guide && guide.targetPrice && (
+      {guide && (guide.verdict || guide.rationale) && (
         <div className="card">
           <div className="card-title">
             <div className="num">3</div>
@@ -217,9 +330,13 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
           <div className="flex flex-col md:flex-row gap-6 mb-6">
             <div className="flex-1 bg-[var(--color-bg-subtle)] p-6 rounded-lg">
               <div className="text-xs font-bold text-[var(--fg3)] mb-2">AI INVESTMENT VERDICT</div>
-              <div className="text-2xl font-bold text-[var(--color-blue)] mb-2">{guide.verdict || '적극 매수'}</div>
+              <div className="text-2xl font-bold mb-2">
+                <span style={{ fontSize: '77%', display: 'inline-block', color: '#334155' }}>{guide.verdict || '판정 대기 (실 데이터 지연)'}</span>
+              </div>
               <div className="stars mb-4">{Array.from({ length: 5 }).map((_, i) => (<span key={i} className={i < Math.floor(guide.stars || 4) ? '' : 'empty'}>★</span>))}</div>
-              <p className="text-sm text-[var(--fg2)] leading-relaxed">{guide.rationale}</p>
+              <p className="text-sm text-[var(--fg2)] leading-relaxed">
+                <span style={{ fontSize: '77%', display: 'inline-block' }}>{guide.rationale}</span>
+              </p>
             </div>
             <div className="flex-1">
               <div className="text-xs font-bold text-[var(--fg3)] mb-3 uppercase">Recommended Price Action</div>
@@ -249,11 +366,17 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
               <h3 className="text-md font-bold mb-3 mt-8">시나리오별 가격 변동 예측</h3>
               <div className="scenario-grid">
                 {d.scenarioAnalysis.map((sc, i) => (
-                  <div key={i} className={`scenario-card ${sc.type === '낙관' ? 'optimistic' : sc.type === '비관' ? 'pessimistic' : 'neutral'}`}>
+                  <div key={i} className={`scenario-card ${sc.type === '상승' || sc.type === '낙관' ? 'optimistic' : sc.type === '하락' || sc.type === '비관' ? 'pessimistic' : 'neutral'}`}>
                     <div className="head">
                       <div className="name">{sc.type}적 시나리오</div>
                     </div>
-                    <div className="delta">{sc.impact}</div>
+                    <div className="delta">
+                      <span style={{ 
+                        fontSize: '77%', 
+                        display: 'inline-block',
+                        color: (sc.type === '상승' || sc.type === '낙관') ? '#2563eb' : (sc.type === '하락' || sc.type === '비관' ? '#dc2626' : '#64748b')
+                      }}>{sc.impact}</span>
+                    </div>
                     <div className="price">예상가: {sc.price}</div>
                     <div className="conditions">{sc.condition}</div>
                   </div>
@@ -267,7 +390,7 @@ const AnalysisReport = ({ result, mode = 'dashboard' }) => {
       {/* Disclaimers */}
       <div className="disclaimer mt-4">
         <strong>법적 고지 (Disclaimer)</strong>
-        본 시스템에서 제공하는 모든 부동산 분석 자료 및 가격 예측 데이터는 AI 모델에 의해 산출된 추정치이며, 실제 시장 상황과 다를 수 있습니다. 투자 결정은 본인의 판단과 책임하에 이루어져야 하며, 본 서비스는 어떠한 투자 결과에 대해서도 법적 책임을 지지 않습니다. 교차 검증을 위해 반드시 공인된 기관의 공부서류(등기부등본 등)를 확인하시기 바랍니다.
+        본 시스템에서 제공하는 모든 부동산 분석 자료 및 가격 예측 데이터는 AI 모델에 의해 산출된 추정치이며, 실제 시장 상황과 다를 수 있습니다. 투자 결정은 본인의 판단과 책임하에 이루어져야 하며, 본 서비스는 어떠 어떠한 투자 결과에 대해서도 법적 책임을 지지 않습니다. 교차 검증을 위해 반드시 공인된 기관의 공부서류(등기부등본 등)를 확인하시기 바랍니다.
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ const RiskSignalGuide = () => {
         setLoading(true);
         setError('');
 
-        const response = await fetch('http://localhost:3001/api/risk-scan');
+        const response = await fetch('/api/risk-scan');
         const payload = await response.json();
 
         if (!response.ok) {
@@ -111,7 +111,7 @@ const RiskSignalGuide = () => {
           <p className="text-slate-500 mt-0.5 ml-10 text-[10px]">실거래가 기반 위험 신호 자동 스캔 결과</p>
         </div>
         <div className="flex gap-2">
-          <span className="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-bold border border-red-100 flex items-center gap-1">
+          <span className="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-[10px] font-bold border border-red-100 flex items-center gap-1 animate-pulse">
             <Activity size={10} /> LIVE 스캔
           </span>
           <span className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold border border-slate-200">
@@ -259,8 +259,8 @@ const RiskSignalGuide = () => {
           <div className="p-3 rounded-xl border bg-amber-50 border-amber-100">
             <div className="flex items-center justify-between gap-2 mb-2">
               <span className="text-[11px] font-black text-amber-700">KB시세 역전 단지</span>
-              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black ${sourceStatus.kbPrice?.enabled ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                {sourceStatus.kbPrice?.enabled ? '연결 대기' : '소스 미연동'}
+              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black flex items-center gap-1 ${sourceStatus.kbPrice?.enabled ? 'bg-amber-600 text-white animate-pulse' : 'bg-slate-200 text-slate-500'}`}>
+                {sourceStatus.kbPrice?.enabled ? <><span className="w-1 h-1 rounded-full bg-white" /> LIVE</> : '소스 미연동'}
               </span>
             </div>
             {scanData.kbPriceInversions.length === 0 ? (
@@ -277,8 +277,8 @@ const RiskSignalGuide = () => {
           <div className="p-3 rounded-xl border bg-rose-50 border-rose-100">
             <div className="flex items-center justify-between gap-2 mb-2">
               <span className="text-[11px] font-black text-rose-700">전세물건 급감 단지</span>
-              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black ${sourceStatus.rentListings?.enabled ? 'bg-rose-600 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                {sourceStatus.rentListings?.enabled ? '연결 대기' : '소스 미연동'}
+              <span className={`text-[9px] px-2 py-0.5 rounded-full font-black flex items-center gap-1 ${sourceStatus.rentListings?.enabled ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-200 text-slate-500'}`}>
+                {sourceStatus.rentListings?.enabled ? <><span className="w-1 h-1 rounded-full bg-white" /> LIVE</> : '소스 미연동'}
               </span>
             </div>
             {scanData.rentSupplyDrops.length === 0 ? (

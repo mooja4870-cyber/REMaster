@@ -6,3 +6,10 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+server_log.txt
+scan_result.json
+inventory_history.json
+.tempmediaStorage/
+brain/
+scratch/

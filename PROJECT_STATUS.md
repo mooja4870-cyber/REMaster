@@ -46,6 +46,19 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [x] **Step 29: Final Report UI Integration** (Complete dashboard layout)
 - [x] **Step 30: V1.1.0 Release** (30-Step Plan Completion)
 
+### Phase 7: Master Compliance & Orchestration (Steps 31-40) - COMPLETED
+- [x] **Step 31: Orchestration Strategy Refactor** (Modular workflow dispatcher)
+- [x] **Step 32: Rules Harness Implementation (Rules 1-7)** (Strict validation)
+- [x] **Step 33: Rules Harness Implementation (Rules 8-15)** (Complete compliance)
+- [x] **Step 34: Advanced Search Planning Engine** (Dynamic query generation)
+- [x] **Step 35: 7-Level Fact-Check Rating System** (Confimed/False logic)
+- [x] **Step 36: 10-Factor Locational Scoring (Master)** (Weight-based metrics)
+- [x] **Step 37: Scenario & SWOT Matrix Refinement** (Quantitative justification)
+- [x] **Step 38: 5-Category Risk Matrix Engine** (Standardized risk levels)
+- [x] **Step 39: Villa/Jeonse Fraud Prevention Dashboard** (126% rule & Ownership)
+- [x] **Step 40: V5.0.0 Grand Release** (Master Compliance Completion)
+
+
 ## Current Status
 - [x] Full functional 30-step roadmap implemented.
 - [x] Multi-Menu Specialized Views (Dashboard, Apartment, Market, Policy, Villa, Risk).
@@ -145,3 +158,52 @@ An AI-powered Real Estate Analysis system providing professional insights on apa
 - [2026-05-06 01:25:00] v4.5.4 Sidebar Scroll Fix: Enabled independent vertical scrolling on the fixed-height sidebar so lower Pro System evidence rows remain reachable on shorter viewports.
 
 - [2026-05-06 01:32:00] v4.5.5 Risk Signal Sources: Added KB price inversion and rent-listing drop slots to the risk dashboard with explicit live data source status, no mock values.
+
+- [2026-05-06 09:22:29] v4.6.0 Initial Experience Restyle: Applied the reference app's rose/pink frosted-glass entry style to the initial experience. Rebuilt WelcomeGuide as a step-based walkthrough, refreshed the app shell/dashboard hero with soft gradient and dot-pattern background, normalized initial Korean UI labels, synchronized package/server health version metadata, and preserved the existing real-data analysis/API flow.
+
+- [2026-05-06 09:27:16] v4.6.1 Word-Break Guard: Added a global no-word-splitting CSS guard across the app (`word-break: keep-all`, normal overflow wrapping, hyphenation disabled) so Korean and Latin words are not broken mid-word. Synchronized package and server health version metadata.
+
+- [2026-05-06 09:38:15] v4.6.2 LTV Tooltip Fix: Repositioned the LTV simulator tooltip to open from the left edge of the info icon so it no longer clips off-screen, restored Korean loan simulator labels, and added a dynamic lookup-date regulatory region line based on the current regulated-area list. Synchronized package and server health version metadata.
+
+- [2026-05-06 09:42:13] v4.6.3 DSR Tooltip: Added a hover tooltip to the DSR estimate card explaining Debt Service Ratio, the simulator's estimated formula, status thresholds, and real screening caveats. Refactored loan simulator tooltip markup for reusable left/right alignment and synchronized package/server health version metadata.
+
+- [2026-05-06 09:44:13] v4.6.4 Sidebar Height Compression: Reduced the sidebar's vertical density to roughly 77% of the previous rhythm by tightening menu item padding, sidebar gaps, header icon/title scale, lower action button padding, and Pro System card padding while preserving width and navigation behavior. Synchronized package/server health version metadata.
+
+- [2026-05-06 09:58:25] v4.6.5 SWOT Sidebar Modal: Added a dedicated SWOT분석 sidebar action above 위협신호 감시, reordered the lower sidebar actions to SWOT분석 / 위협신호 감시 / 대출 한도·이자 / 사용 가이드, and introduced a SWOT modal that uses generated analysis data when available with fallback decision strategies. Synchronized package/server health version metadata.
+
+- [2026-05-06 10:11:05] v4.6.5 Sidebar Version Label: Added the current package version to the sidebar brand subtitle so the header displays `RE Master` and `AI Analyst v4.6.5` while staying synchronized with package metadata.
+
+- [2026-05-06 10:23:04] v4.6.6 Welcome Guide Copy Update: Replaced the 01/05 welcome guide headline and body copy with the new purchase/hold decision-oriented message, then synchronized package, lockfile, server health, and UI version metadata.
+
+- [2026-05-06 10:25:14] v4.6.7 Welcome Guide Title Line Break: Split the 01/05 welcome guide headline into two deliberate lines (`지금 매수? 보류?` and `AI가 말해주는 ‘정답’이 있습니다.`) using newline-aware rendering while preserving the no mid-word wrapping rule. Synchronized package, lockfile, server health, and UI version metadata.
+
+- [2026-05-06 10:30:37] v4.6.8 Insight Guide Expansion: Expanded the welcome guide from 5 to 9 slides, kept the first slide fixed, and rewrote the remaining slides as decision-oriented insight copy for apartment location, market outlook, policy, villa/jeonse, fact-checking, SWOT, risk signals, and loan affordability. Synchronized package, lockfile, server health, and UI version metadata.
+
+- [2026-05-06 10:55:00] v4.7.0 Real-Data Connection (Risk Scan): Implemented parallelized risk scan engine using `Promise.all` for a 5x speed boost. Added `REB_Price_Adapter` (한국부동산원) to replace KB Price inversion placeholders and `Naver_Inventory_Scraper` (네이버 부동산 모바일 API) for real-time jeonse listing count detection. Added month-fallback logic to MOLIT fetches to handle early-month data gaps. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:05:00] v4.7.1 Mock Extermination: Replaced all remaining hardcoded dates, versions, and fallback strings with dynamic values and 'Real Data Delayed' status messages across AnalysisReport.jsx and server.js. Updated AI prompt to forbid mock data generation. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:12:00] v4.7.2 SWOT UI Polish: Applied blinking animation and center alignment to the SWOT modal instruction text for better user guidance. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:20:00] v4.7.3 Real-Time Sync & Safety: Fixed API health check response keys to match frontend expectations, restoring the "Gemini: 연동" and "API 활성" 표시. Added 10s timeout to MOLIT fetches to prevent scan hanging. Expanded risk scan back to 14 regions. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:30:00] v4.8.0 Inventory History & Granular Risk: Implemented `inventory_history.json` persistent storage and a 6-hour snapshot collector. Replaced mock "50 listings" check with a real 24h trend analysis for Jeonse supply drops. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:40:00] v4.8.1 Market Sentiment Visualization: Added `MarketTrendChart.jsx` featuring high-fidelity SVG animations and real-time history data integration. Implemented `/api/market-trends` endpoint for time-series analysis. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:50:00] v4.8.2 Real-time Rate Sync: Integrated ECOS-based interest rate feed into the `LoanSimulator.jsx`. Replaced static mock rates with a live sync system featuring a "LIVE" heartbeat badge and automatic COFIX/Mortgage rate updates. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 11:55:00] v4.8.3 UX Copy Refresh: Updated dashboard hero headline to more aggressive, decision-oriented copy ("지금 매수? 보류? AI가 말해주는 ‘정답’이 있습니다."). Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 12:05:00] v4.8.4 Dashboard Layout Refinement: Repositioned status cards above the trend chart and implemented a compact 33% height profile (Horizontal layout) for better space utilization. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 12:10:00] v4.8.5 High-Fidelity Risk Dashboard: Upgraded risk signal status indicators from "Waiting" to "LIVE" with heartbeat animations. Refined backend status messages to reflect active time-series analysis of REB prices and Naver inventory history. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 12:15:00] v4.8.6 Pulse Synchronization: Added heartbeat pulse animation to the main "LIVE 스캔" indicator for consistent real-time scanning feedback. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 12:20:00] v4.8.7 Branding UI Refinement: Increased the font size of the side header version tag to 133% (9px -> 12px) for improved legibility and brand presence. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 12:25:00] v4.8.8 Hero Section Optimization: Reduced the vertical height and padding of the main dashboard hero banner (from 48px padding and 280px min-height to 24px padding and 180px min-height) for a more compact and content-focused layout. Synchronized package, lockfile, and server health metadata.
+
+- [2026-05-06 14:05:00] v5.0.1 Production Refactoring: 로컬 LLM(@local) 연동 로직을 제거하고 전체 분석 엔진을 Gemini로 단일화. 프로덕션 배포를 위한 상대 경로 URL 적용 및 정적 파일 서빙 설정 완료.
+

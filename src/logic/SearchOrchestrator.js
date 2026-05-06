@@ -17,45 +17,48 @@ export const planSearch = (query = '') => {
 
   if (plan.type === 'VILLA_ANALYSIS') {
     plan.queries = [
-      `${normalized} 실거래가 시세`,
+      `${normalized} 실거래가 시세 2025 2026`,
       `${normalized} 전세가율 깡통전세 리스크`,
-      `${normalized} 주변 빌라 거래량 보증보험`
+      `${normalized} 주변 빌라 거래량 보증보험`,
+      `${normalized} 건축물대장 위반여부`
     ];
     plan.steps = [
-      '빌라 요청 파싱 완료',
-      '매매 및 전월세 실거래 데이터 수집 중',
-      '전세 사기 리스크 체크리스트 검증 중',
-      '주변 보증금 및 환금성 분석 중'
+      '빌라/연립다세대 요청 분석 중',
+      '국토부 실거래 데이터 수집 중',
+      '전세 사기 리스크 매트릭스 검증 중',
+      'HUG 보증보험 가입 요건 분석 중'
     ];
   } else if (plan.type === 'APARTMENT_ANALYSIS') {
     plan.queries = [
-      `${normalized} 실거래가 매매 전세 2025 2026`,
-      `${normalized} 입지 분석 학군 교통 인프라`,
-      `${normalized} 주변 개발호재 GTX 지하철`,
-      `${normalized} 최근 아파트 시세 비교`,
-      `${normalized} 지역 입주물량 전망`
+      `${normalized} 실거래가 2025 2026`,
+      `${normalized} 아파트 매매 호가 급매물`,
+      `${normalized} 주변 개발계획 GTX 지하철 신설`,
+      `${normalized} 지역 입주물량 전망 2026 2027`,
+      `${normalized} 배정 초중고 학업성취도 학원가`,
+      `${normalized} 규제지역 투기과열지구 세금`
     ];
     plan.steps = [
-      '사용자 요청 파싱 완료',
-      '검색 쿼리 설계 및 실행 중',
-      '실거래가 데이터 수집 중',
-      '입지 요소 점수 계산 중',
-      '가격 전망 시나리오 분석 중',
-      '팩트체크 및 리스크 평가 중'
+      '마스터 분석 기획 완료',
+      '국토부/한국은행/카카오/부동산원 API 병렬 호출 중',
+      '10대 핵심 입지 요소 점수 산출 중',
+      '가격 전망 시나리오(낙관/중립/비관) 시뮬레이션 중',
+      'SWOT 및 리스크 매트릭스 생성 중',
+      '15대 철칙 기반 하네스 검증 및 최종 리포트 패키징 중'
     ];
   } else if (plan.type === 'POLICY_ANALYSIS') {
     plan.queries = [
-      `${normalized} 정부 발표 공식 자료 site:go.kr`,
+      `${normalized} 보도자료 site:go.kr`,
+      `${normalized} 시행일 소득요건 LTV DSR`,
       `${normalized} 시장 영향 분석 전문가 의견`,
-      `${normalized} 적용 지역 규제 현황`
+      `부동산 규제지역 현황 2026`
     ];
     plan.steps = [
       '정책 요청 파싱 완료',
-      '공식 소스 검색 중',
-      '시장 영향 시뮬레이션 중'
+      '공식 정부 소스 검색 및 팩트체크 중',
+      '대출 및 세제 영향 시뮬레이션 중'
     ];
   } else {
-    plan.queries = [`${normalized} 부동산 분석`];
+    plan.queries = [`${normalized} 부동산 분석`, `${normalized} 시세` ];
     plan.steps = ['요청 파싱 완료', '실데이터 분석 중'];
   }
 
@@ -64,7 +67,7 @@ export const planSearch = (query = '') => {
 
 export const fetchRealAiAnalysis = async (query, type) => {
   try {
-    const response = await fetch('http://localhost:3001/api/analyze', {
+    const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify({ query, type })
